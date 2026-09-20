@@ -7,10 +7,13 @@ import {
   Typography,
   Stack,
   IconButton,
+  InputAdornment,
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import AppleIcon from '@mui/icons-material/Apple';
 import FacebookIcon from '@mui/icons-material/Facebook';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import loginIllustration from '../assets/img1.png';
 import { signInWithGoogle } from '../firebase/authService';
 
@@ -19,6 +22,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,15 +48,33 @@ const LoginPage = () => {
     }
   };
 
+  const textFieldSx = {
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '999px',
+      height: 56,
+      backgroundColor: '#fff',
+      '& fieldset': { borderColor: '#e0e0e0' },
+      '&:hover fieldset': { borderColor: '#b0b0b0' },
+      '&.Mui-focused fieldset': { borderColor: '#000' },
+    },
+    '& .MuiOutlinedInput-input': {
+      fontSize: 14,
+      color: '#333',
+    },
+  };
+
   return (
     <Box
       sx={{
         display: 'flex',
+        width: '100%',
         minHeight: '100vh',
         flexDirection: { xs: 'column', md: 'row' },
         backgroundColor: '#fff',
+        overflowX: 'hidden',
       }}
     >
+      {/* Left Side - Form */}
       <Box
         sx={{
           flex: 1,
@@ -61,40 +83,42 @@ const LoginPage = () => {
           justifyContent: 'center',
           alignItems: 'center',
           px: { xs: 3, md: 6 },
-          py: 6,
+          py: { xs: 5, md: 6 },
         }}
       >
         <Box sx={{ width: '100%', maxWidth: 420 }}>
-          {/* Title */}
+          {/* Title - centered */}
           <Typography
             sx={{
-              fontSize: { xs: 32, md: 40 },
+              fontSize: { xs: 32, md: 42 },
               fontWeight: 800,
               color: '#0a0a0a',
               letterSpacing: '-1px',
               mb: 1.5,
+              textAlign: 'center',
             }}
           >
-             Welcome back!
+            Welcome back!
           </Typography>
 
-          
+          {/* Subtitle - centered */}
           <Typography
             sx={{
               fontSize: 13,
               color: '#6b6b6b',
-              lineHeight: 1.5,
+              lineHeight: 1.6,
               mb: 4,
-              maxWidth: 340,
               textAlign: 'center',
+              maxWidth: 360,
               mx: 'auto',
             }}
           >
-            Simplify your workflow and boost your productivity with Tuga's App.
-            Get started for free.
+            Simplify your workflow and boost your productivity
+            <br />
+            with Tuga's App. Get started for free.
           </Typography>
 
-         
+          {/* Form */}
           <form onSubmit={handleLogin}>
             <Stack spacing={2}>
               <TextField
@@ -105,44 +129,33 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 error={emailError}
                 helperText={emailError ? 'Invalid email format' : ''}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '999px',
-                    height: 52,
-                    backgroundColor: '#fff',
-                    '& fieldset': { borderColor: '#e0e0e0' },
-                    '&:hover fieldset': { borderColor: '#b0b0b0' },
-                    '&.Mui-focused fieldset': { borderColor: '#000' },
-                  },
-                  '& .MuiOutlinedInput-input': {
-                    fontSize: 14,
-                    color: '#333',
-                  },
-                }}
+                sx={textFieldSx}
               />
 
               <TextField
                 placeholder="Password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 variant="outlined"
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '999px',
-                    height: 52,
-                    backgroundColor: '#fff',
-                    '& fieldset': { borderColor: '#e0e0e0' },
-                    '&:hover fieldset': { borderColor: '#b0b0b0' },
-                    '&.Mui-focused fieldset': { borderColor: '#000' },
-                  },
-                  '& .MuiOutlinedInput-input': {
-                    fontSize: 14,
-                    color: '#333',
-                  },
+                sx={textFieldSx}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        edge="end"
+                        sx={{ color: '#9e9e9e' }}
+                        aria-label="toggle password visibility"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                 }}
               />
+
               <Typography
                 sx={{
                   fontSize: 12,
@@ -155,9 +168,6 @@ const LoginPage = () => {
                 Forgot Password?
               </Typography>
 
-
-
-             
               <Button
                 type="submit"
                 variant="contained"
@@ -180,7 +190,7 @@ const LoginPage = () => {
             </Stack>
           </form>
 
-          
+          {/* Divider */}
           <Box
             sx={{
               display: 'flex',
@@ -195,7 +205,7 @@ const LoginPage = () => {
             <Box sx={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }} />
           </Box>
 
-          
+          {/* Social Buttons */}
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5 }}>
             <IconButton
               onClick={handleGoogleLogin}
@@ -237,10 +247,10 @@ const LoginPage = () => {
             </IconButton>
           </Box>
 
-          
+          {/* Footer */}
           <Typography
             sx={{
-              mt: 6,
+              mt: { xs: 4, md: 6 },
               textAlign: 'center',
               fontSize: 12,
               color: '#555',
@@ -260,7 +270,7 @@ const LoginPage = () => {
         </Box>
       </Box>
 
-     
+      {/* Right Side - Illustration */}
       <Box
         sx={{
           flex: 1,
@@ -282,7 +292,6 @@ const LoginPage = () => {
             justifyContent: 'center',
             alignItems: 'center',
             p: 4,
-            position: 'relative',
           }}
         >
           <Box
