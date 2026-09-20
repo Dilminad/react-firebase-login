@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Divider, Stack } from '@mui/material';
-import GoogleButton from '../components/googlebutton';
-import img1 from '../assets/img1.png';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Stack,
+  IconButton,
+} from '@mui/material';
+import GoogleIcon from '@mui/icons-material/Google';
+import AppleIcon from '@mui/icons-material/Apple';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import loginIllustration from '../assets/img1.png';
+import { signInWithGoogle } from '../firebase/authService';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
@@ -17,11 +29,19 @@ const LoginPage = () => {
     }
 
     setEmailError(false);
+    console.log('Login attempted', { email, password });
+  };
 
-    console.log('Login attempted', {
-      email,
-      password,
-    });
+  const handleGoogleLogin = async () => {
+    try {
+      const { accessToken } = await signInWithGoogle();
+      localStorage.setItem('accessToken', accessToken || '');
+      navigate('/token');
+    } catch (error: any) {
+      console.error('FULL ERROR:', error);
+      console.error('Error code:', error.code);
+      alert(`Google login failed: ${error.code || 'Unknown error'}`);
+    }
   };
 
   return (
@@ -30,9 +50,9 @@ const LoginPage = () => {
         display: 'flex',
         minHeight: '100vh',
         flexDirection: { xs: 'column', md: 'row' },
+        backgroundColor: '#fff',
       }}
     >
-     
       <Box
         sx={{
           flex: 1,
@@ -40,75 +60,119 @@ const LoginPage = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          p: 4,
+          px: { xs: 3, md: 6 },
+          py: 6,
         }}
       >
-        <Box sx={{ maxWidth: 400, width: '100%' }}>
+        <Box sx={{ width: '100%', maxWidth: 420 }}>
+          {/* Title */}
           <Typography
-            variant="h4"
-            sx={{ fontWeight: 'bold' }}
-            gutterBottom
+            sx={{
+              fontSize: { xs: 32, md: 40 },
+              fontWeight: 800,
+              color: '#0a0a0a',
+              letterSpacing: '-1px',
+              mb: 1.5,
+            }}
           >
-            Welcome back!
+             Welcome back!
           </Typography>
 
+          
           <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ mb: 3 }}
+            sx={{
+              fontSize: 13,
+              color: '#6b6b6b',
+              lineHeight: 1.5,
+              mb: 4,
+              maxWidth: 340,
+              textAlign: 'center',
+              mx: 'auto',
+            }}
           >
-            Simplify your workflow and boost your productivity with Tuga's
-            App.
+            Simplify your workflow and boost your productivity with Tuga's App.
+            Get started for free.
           </Typography>
 
+         
           <form onSubmit={handleLogin}>
             <Stack spacing={2}>
               <TextField
-                label="Username"
+                placeholder="Username"
                 variant="outlined"
                 fullWidth
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailError(false);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
                 error={emailError}
-                helperText={
-                  emailError ? 'Invalid email format' : ''
-                }
+                helperText={emailError ? 'Invalid email format' : ''}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '999px',
+                    height: 52,
+                    backgroundColor: '#fff',
+                    '& fieldset': { borderColor: '#e0e0e0' },
+                    '&:hover fieldset': { borderColor: '#b0b0b0' },
+                    '&.Mui-focused fieldset': { borderColor: '#000' },
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 14,
+                    color: '#333',
+                  },
+                }}
               />
 
               <TextField
-                label="Password"
+                placeholder="Password"
                 type="password"
                 variant="outlined"
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-              />
-
-              <Typography
-                variant="caption"
-                align="right"
                 sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '999px',
+                    height: 52,
+                    backgroundColor: '#fff',
+                    '& fieldset': { borderColor: '#e0e0e0' },
+                    '&:hover fieldset': { borderColor: '#b0b0b0' },
+                    '&.Mui-focused fieldset': { borderColor: '#000' },
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    fontSize: 14,
+                    color: '#333',
+                  },
+                }}
+              />
+              <Typography
+                sx={{
+                  fontSize: 12,
+                  textAlign: 'right',
+                  color: '#333',
                   cursor: 'pointer',
-                  color: 'text.secondary',
+                  mt: -0.5,
                 }}
               >
                 Forgot Password?
               </Typography>
 
+
+
+             
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
+                disableElevation
                 sx={{
-                  borderRadius: '50px',
-                  bgcolor: '#000',
-                  py: 1.5,
-                  '&:hover': {
-                    bgcolor: '#222',
-                  },
+                  borderRadius: '999px',
+                  backgroundColor: '#000',
+                  color: '#fff',
+                  py: 1.8,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  textTransform: 'none',
+                  mt: 1,
+                  '&:hover': { backgroundColor: '#1a1a1a' },
                 }}
               >
                 Login
@@ -116,28 +180,77 @@ const LoginPage = () => {
             </Stack>
           </form>
 
-          <Divider sx={{ my: 3 }}>
-            or continue with
-          </Divider>
-
+          
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'center',
+              alignItems: 'center',
+              my: 3.5,
             }}
           >
-            <GoogleButton onClick={() => {}} />
+            <Box sx={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }} />
+            <Typography sx={{ px: 2, fontSize: 12, color: '#666' }}>
+              or continue with
+            </Typography>
+            <Box sx={{ flex: 1, height: '1px', backgroundColor: '#e0e0e0' }} />
           </Box>
 
+          
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2.5 }}>
+            <IconButton
+              onClick={handleGoogleLogin}
+              sx={{
+                width: 44,
+                height: 44,
+                backgroundColor: '#000',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#222' },
+              }}
+            >
+              <GoogleIcon sx={{ fontSize: 22 }} />
+            </IconButton>
+
+            <IconButton
+              onClick={() => {}}
+              sx={{
+                width: 44,
+                height: 44,
+                backgroundColor: '#000',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#222' },
+              }}
+            >
+              <AppleIcon sx={{ fontSize: 24 }} />
+            </IconButton>
+
+            <IconButton
+              onClick={() => {}}
+              sx={{
+                width: 44,
+                height: 44,
+                backgroundColor: '#000',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#222' },
+              }}
+            >
+              <FacebookIcon sx={{ fontSize: 22 }} />
+            </IconButton>
+          </Box>
+
+          
           <Typography
-            variant="body2"
-            align="center"
-            sx={{ mt: 3 }}
+            sx={{
+              mt: 6,
+              textAlign: 'center',
+              fontSize: 12,
+              color: '#555',
+            }}
           >
             Not a member?{' '}
             <span
               style={{
-                fontWeight: 'bold',
+                fontWeight: 600,
+                color: '#000',
                 cursor: 'pointer',
               }}
             >
@@ -147,31 +260,60 @@ const LoginPage = () => {
         </Box>
       </Box>
 
-      
+     
       <Box
         sx={{
           flex: 1,
-          bgcolor: '#E8F5E9',
           display: { xs: 'none', md: 'flex' },
           justifyContent: 'center',
           alignItems: 'center',
-          p: 4,
+          p: { md: 4 },
+          backgroundColor: '#fff',
         }}
       >
         <Box
-          component="img"
-          src={img1}
-          alt="Login Illustration"
           sx={{
-            maxWidth: '80%',
-            height: 'auto',
+            width: '100%',
+            height: '90%',
+            backgroundColor: '#EAF5EC',
+            borderRadius: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            p: 4,
+            position: 'relative',
           }}
-        />
+        >
+          <Box
+            component="img"
+            src={loginIllustration}
+            alt="Login Illustration"
+            sx={{
+              width: '80%',
+              height: 'auto',
+              maxHeight: '60%',
+              objectFit: 'contain',
+            }}
+          />
+
+          <Typography
+            sx={{
+              mt: 4,
+              fontSize: { md: 18, lg: 20 },
+              fontWeight: 500,
+              color: '#1a1a1a',
+              textAlign: 'center',
+              maxWidth: 340,
+              lineHeight: 1.4,
+            }}
+          >
+            Make your work easier and organized with Tuga's App
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
 };
 
 export default LoginPage;
-
-

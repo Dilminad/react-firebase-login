@@ -9,23 +9,21 @@ const TokenPage = () => {
   return (
     <Box
       sx={{
-        p: 4,
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '100vh',
+        p: 3,
+        textAlign: 'center',
       }}
     >
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
         Login Successful!
       </Typography>
 
-      <Typography
-        variant="body1"
-        sx={{ wordBreak: 'break-all', mb: 3, maxWidth: 600, textAlign: 'center' }}
-      >
-        Your Access Token: {token || 'No token found'}
+      <Typography sx={{ mb: 3, wordBreak: 'break-all', maxWidth: 600 }}>
+        {token || 'No token found'}
       </Typography>
 
       <Button variant="contained" onClick={() => navigate('/')}>
